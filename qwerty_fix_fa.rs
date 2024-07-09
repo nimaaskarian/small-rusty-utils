@@ -1,27 +1,27 @@
 use std::io::{self, BufRead};
 use std::env;
 
-const EN_KEYS: &str = "qwertyuiop[]asdfghjkl;'zxcvbnm,./1234567890`~\"";
-const FA_KEYS: &str = "ضصثقفغعهخحجچشسیبلاتنمکگظطزرذدپو./۱۲۳۴۵۶۷۸۹۰‍÷؛";
-type Char = char;
+const EN_KEYS: &[char] = &['q','w','e','r','t','y','u','i','o','p','[',']','a','s','d','f','g','h','j','k','l',';', '\'',
+                            'z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '.', '/', '1', '2', '3', '4', '5', '6',
+                            '7', '8', '9', '0', '`', '~'];
 
-#[inline]
-fn src_dst_fa_en(reverse: bool) -> (Vec<Char>, Vec<Char>){
-    let src: Vec<Char> = if reverse {
-        EN_KEYS
+const FA_KEYS: &[char] = &['ض' ,'ص' ,'ث' ,'ق' ,'ف' ,'غ' ,'ع' ,'ه' ,'خ' ,'ح' ,'ج' ,'چ' ,'ش' ,
+                            'س' ,'ی' ,'ب' ,'ل' ,'ا' ,'ت' ,  'ن',  'م' , 'ک' , 'گ' , 'ظ' ,
+                            'ط' , 'ز' , 'ر' , 'ذ' , 'د' , 'پ',  'و',  '.', '/',  '۱', '۲', '۳',
+                            '۴', '۵', '۶', '۷', '۸', '۹', '۰', '\u{200D}', '\u{00F7}', '؛'];
+
+#[inline(always)]
+fn src_dst_fa_en(reverse: bool) -> (&'static [char], &'static [char]){
+    if reverse {
+        (EN_KEYS, FA_KEYS)
     } else {
-        FA_KEYS
-    }.chars().collect();
-    let dst: Vec<Char> = if reverse {
-        FA_KEYS
-    } else {
-        EN_KEYS
-    }.chars().collect();
-    (src, dst)
+        (FA_KEYS, EN_KEYS)
+    }
 }
 
-fn src_to_dst_in_input(input: &str, src: &[Char], dst: &[Char]) -> String {
-    let mut result: Vec<Char> = vec![];
+#[inline(always)]
+fn src_to_dst_in_input(input: &str, src: &[char], dst: &[char]) -> String {
+    let mut result = String::new();
 
     for c in input.chars() {
         if let Some(index) = src.iter().position(|&r| r == c) {
@@ -31,7 +31,7 @@ fn src_to_dst_in_input(input: &str, src: &[Char], dst: &[Char]) -> String {
         }
     }
 
-    result.into_iter().collect()
+    result
 }
 
 fn main() -> std::io::Result<()>{
