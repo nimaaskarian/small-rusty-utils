@@ -1,19 +1,19 @@
 use std::io::{self, BufRead};
 use std::env;
 
-const EN_KEYS: &str = "qwertyuiop[]asdfghjkl;'zxcvbnm,./1234567890";
-const FA_KEYS: &str = "ضصثقفغعهخحجچشسیبلاتنمکگظطزرذدپو./۱۲۳۴۵۶۷۸۹۰";
+const EN_KEYS: &str = "qwertyuiop[]asdfghjkl;'zxcvbnm,./1234567890`~";
+const FA_KEYS: &str = "ضصثقفغعهخحجچشسیبلاتنمکگظطزرذدپو./۱۲۳۴۵۶۷۸۹۰‍÷";
 fn farsi_to_english(input: &str, reverse: bool) -> String {
     let src: Vec<u16> = if reverse {
-        EN_KEYS.encode_utf16().collect()
+        EN_KEYS
     } else {
-        FA_KEYS.encode_utf16().collect()
-    };
+        FA_KEYS
+    }.encode_utf16().collect();
     let dst: Vec<u16> = if reverse {
-        FA_KEYS.encode_utf16().collect()
+        FA_KEYS
     } else {
-        EN_KEYS.encode_utf16().collect()
-    };
+        EN_KEYS
+    }.encode_utf16().collect();
 
     let mut result: Vec<u16> = vec![];
 
@@ -33,7 +33,7 @@ fn main() -> std::io::Result<()>{
     let reverse = {
         let mut reverse = false;
         let args: Vec<String> = env::args().collect();
-        if args.len() > 1 && args[1] == String::from("-r") {
+        if args.len() > 1 && args[1].as_str() == "-r" {
             reverse = true
         }
         reverse
