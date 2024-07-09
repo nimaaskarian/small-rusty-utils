@@ -3,26 +3,27 @@ use std::env;
 
 const EN_KEYS: &str = "qwertyuiop[]asdfghjkl;'zxcvbnm,./1234567890`~\"";
 const FA_KEYS: &str = "ضصثقفغعهخحجچشسیبلاتنمکگظطزرذدپو./۱۲۳۴۵۶۷۸۹۰‍÷؛";
+type Char = char;
 
 #[inline]
-fn src_dst(reverse: bool) -> (Vec<u16>, Vec<u16>){
-    let src: Vec<u16> = if reverse {
+fn src_dst_fa_en(reverse: bool) -> (Vec<Char>, Vec<Char>){
+    let src: Vec<Char> = if reverse {
         EN_KEYS
     } else {
         FA_KEYS
-    }.encode_utf16().collect();
-    let dst: Vec<u16> = if reverse {
+    }.chars().collect();
+    let dst: Vec<Char> = if reverse {
         FA_KEYS
     } else {
         EN_KEYS
-    }.encode_utf16().collect();
+    }.chars().collect();
     (src, dst)
 }
 
-fn farsi_to_english(input: &str, src: &[u16], dst: &[u16]) -> String {
-    let mut result: Vec<u16> = vec![];
+fn src_to_dst_in_input(input: &str, src: &[Char], dst: &[Char]) -> String {
+    let mut result: Vec<Char> = vec![];
 
-    for c in input.encode_utf16() {
+    for c in input.chars() {
         if let Some(index) = src.iter().position(|&r| r == c) {
             result.push(dst[index]);
         } else {
@@ -30,7 +31,7 @@ fn farsi_to_english(input: &str, src: &[u16], dst: &[u16]) -> String {
         }
     }
 
-    String::from_utf16(&result).expect("Conversion to string failed")
+    result.into_iter().collect()
 }
 
 fn main() -> std::io::Result<()>{
@@ -44,11 +45,11 @@ fn main() -> std::io::Result<()>{
         reverse
     };
 
-    let (src, dst) = src_dst(reverse);
+    let (src, dst) = src_dst_fa_en(reverse);
     let stdin = io::stdin();
     let mut lines = stdin.lock().lines();
     while let Some(line) = lines.next(){
-        println!("{}", farsi_to_english(&line?, &src, &dst));
+        println!("{}", src_to_dst_in_input(&line?, &src, &dst));
     }
     Ok(())
 }
